@@ -17,6 +17,7 @@ export default function pullStyles(styleTypes): void {
     let fontSizes: NewTokenObject[] = [];
     let letterSpacing: NewTokenObject[] = [];
     let paragraphSpacing: NewTokenObject[] = [];
+
     if (styleTypes.colorStyles) {
         colors = figma
             .getLocalPaintStyles()
@@ -78,7 +79,9 @@ export default function pullStyles(styleTypes): void {
         const uniqueFontCombinations = fontCombinations.filter(
             (v, i, a) => a.findIndex((t) => t.family === v.family && t.style === v.style) === i
         );
+
         lineHeights = rawLineHeights
+            .sort((a, b) => a.value - b.value)
             .filter((v, i, a) => a.findIndex((t) => t.unit === v.unit && t.value === v.value) === i)
             .map((lh, idx) => ({
                 name: `lineHeights.${idx}`,
@@ -99,7 +102,7 @@ export default function pullStyles(styleTypes): void {
         }));
 
         paragraphSpacing = rawParagraphSpacing
-            .sort((a, b) => a - b)
+            .sort((a, b) => a.value - b.value)
             .map((size, idx) => ({
                 name: `paragraphSpacing.${idx}`,
                 value: size.toString(),
@@ -107,6 +110,7 @@ export default function pullStyles(styleTypes): void {
             }));
 
         letterSpacing = rawLetterSpacing
+            .sort((a, b) => a.value - b.value)
             .filter((v, i, a) => a.findIndex((t) => t.unit === v.unit && t.value === v.value) === i)
             .map((lh, idx) => ({
                 name: `letterSpacing.${idx}`,
